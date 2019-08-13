@@ -18,11 +18,11 @@ Tournaments are special events in which wizards battle to win a prize called The
 
 In order to win the tournament, a single wizard (sometimes more) needs to be the last one standing and thus have the highest power level. Power can be transferred from duels (which are a bit like rock, paper, scissors, but more complicated) and through mechanisms like ascension, gifting, and revival. (much more detail in #link).
 
-Wizards also need to worry about an unstoppable force called "the blue mold." It has its own power level and once it begins to rise, will eventually surpass even the most powerful wizard. Wizards who have 0 power left, or whose power is lower than the blue mold level, are *technically* eliminated. This is where TheButton comes in.
+Wizards also need to worry about an unstoppable force called "the blue mold." It has its own power level and once it begins to rise, will eventually surpass even the most powerful wizard. Wizards who have 0 power left, or whose power is lower than the blue mold level, are essentially eliminated, but not *technically*. This is where TheButton comes in.
 
 #### Concept
 
-In order to *fully* eliminate a wizard, someone needs to actually call a function in the tournament smart contract. This ensures that the particular wizard deserves elimination based on the rules of the tournament. It also permanently etches the elimination in "immutable ledger of The Blockchain". At the moment, there's little incentive for 99% of players to call these function, especially if they were eliminated. The gas cost, potentially complex proofs, and lack of incentive for anyone other than owners of remaining wizards close to victory, means most people won't bother.
+In order to *fully* eliminate a wizard, someone needs to actually call a function in the tournament smart contract. This ensures that the particular wizard deserves elimination based on the rules of the tournament. It also permanently etches the elimination in the "immutable ledger of The Blockchain". At the moment, there's little incentive for 99% of players to call these functions, especially if they were eliminated. The gas cost, potentially complex proofs, and lack of incentive for anyone other than maybe the owners of remaining wizards close to victory, means most people won't bother.
 
 TheButton hopes to transform this complicated/boring/mean task into a simple, addictive experience. 
 
@@ -93,8 +93,7 @@ function cullMoldedWithSurvivor(uint256[] calldata wizardIds, uint256 survivor) 
 3. More complicated case of all knowing at least 6 moldy wizards and providing them in a sorted list
 
 ```javascript
-function cullMoldedWithMolded(uint256[] calldata moldyWizardIds)
-external duringCullingWindow {
+function cullMoldedWithMolded(uint256[] calldata moldyWizardIds) external duringCullingWindow {
     uint256 currentId;
     uint256 currentPower;
     uint256 previousId = moldyWizardIds[0];
@@ -175,7 +174,7 @@ Ways I could make this more complicated than it needs to be, but probably should
 
 - possible "advanced mode" that allows more customization of culling settings in the UI
 - provide interface with methods for all erc721 functionality for "ghost" wizards: transfer, approve, etc
-- "extra advanced mode" for max truslessness that does the wizard sorting via on-chain [binary heap](https://github.com/zmitton/eth-heap) or sim
+- "extra advanced mode" for max trustlessness that does the wizard sorting via on-chain [binary heap](https://github.com/zmitton/eth-heap) or sim
 - ensure the NFTs minted are compatible with future tournaments
 - leaderboard for most culled/most power culled
 
