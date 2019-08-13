@@ -6,39 +6,155 @@ This project is a submission for the 2019 [CheezeWizards/CoinList](https://coinl
 
 ### High-Level Overview
 
+TheButton is an interface and incentive structure for permanently eliminating wizards from the inaugural CheezeWizards Tournament. It transforms the complicated, boring, and slightly-sadistic task of sorting the winners from the losers into a single button click. To reward clickers for their gas and service, they will receive a unique "ghost wizard" NFT with the (inverted) traits of the loser they eliminated. Dosen't it feel good to be mean?
+
+If you already know what words like CheezeWizards, NFT, and Tournament mean, feel free to skip ahead to #concept.
+
 #### Context
-- minimum required description of wizards, power, and the tournament
+
+CheezeWizards is a game by DapperLabs. Wizards are ERC-721 tokens (Non-Fungible Tokens, or NFTs) that live on Ethereum blockchain. In plain english: each wizard is a provably unique collectable item. Each wizard has a unique id, a power level, and belongs to one of four affinities (Neutral, Fire, Water, Wind). While wizards can be bought, sold, traded, or hoarded, their main purpose is to compete in tournaments.
+
+Tournaments are special events in which wizards battle to win a prize called The Big Cheeze. The inaugural Tournament has a prize valued at  over 600 ETH. Tournaments have a three successive phases during which only certain actions are allowed (much more detail in #link). Within the final two phases, a repeating cycle of four windows determines when wizards are allowed to battle.
+
+In order to win the tournament, a single wizard (sometimes more) needs to be the last one standing and thus have the highest power level. Power can be transferred from duels (which are a bit like rock, paper, scissors, but more complicated) and through mechanisms like ascension, gifting, and revival. (much more detail in #link).
+
+Wizards also need to worry about an unstoppable force called "the blue mold." It has its own power level and once it begins to rise and will eventually surpass even the most powerful wizard. Wizards who have 0 power left, or whose power is lower than the blue mold level, are *technically* eliminated. This is where TheButton comes in.
+
 #### Concept
-- an interface and incentive structure for culling tired/molded wizards
+
+In order to fully eliminate a wizard, someone needs to actually call a function in tournament smart contract. This ensures that the particular wizard deserves elimination based on the rules of the tournament. It also permanently etches the elimination in stone on the blockchain. At the moment, there's little incentive for 99% of people to call these function. The cost gas, require potentially complex proofs, and offer little incentive to anyone other than owners of some remaining wizards close to victory.
+
+TheButton hopes to transform this complicated/boring/mean task into a simple, addictive experience. 
+
 #### Goals
-- abstract away complexity/validation of culling checks with a dead-simple single button interface
-- celebrate the darkness of permanently eliminating wizards
-- mint "ghost" wizard NFTs with inverse stats of wizard culled (eg, their id, power, attribute is an `int = -1 * uint` of the wizard culled)
+
+- abstract away the complexity identify/validation cullable wizards with a dead-simple single button interface
+- embrace the darkness of permanently eliminating wizards, with cheeky dark humour
+- provide an incentive by minting "ghost wizard" NFTs with the inverse stats of wizard culled (eg, their id, power, attribute is an `int = -1 * uint` of the wizard culled). "ghost wizards" only have negative numbers
+
 #### Scope / Restrictions
-- only during culling window during elimination phase
-- only certain wizards are eligible
-- specific proofs required to call the functions correctly
-- no direct access to current tournament mold level, phase, or window
+
+The scope of this project applies only to the inaugural tournament. TheButton will only be available during limited intervals based on the specific rules and conditions in the tournament. Scope is further restricted by the goal of offering a focused user-experience.
   
 ### Technical Specification
 
 #### Data Needed / Available
 - available on chain
-  - individual wizard power levels and molded status
-- available off chain
-  - lots of wizards data that could be sorted
+  - individual wizard battle power levels and molded status via `getWizard()`
+  - three functions to cull wizards with different criteria
+- available off chain via api
+  - lots of wizard data that could be requested and sorted
 - unavailable directly, requiring a new solution
   - is it the elimination phase?
   - is it the culling window?
   - what is the mold level?
-  - wizards ranked by power
-  - cullable wizards
+  - which wizards have power below mold or 0?
+	- which wizards have power above mold?
+	- how many remaining wizards are there?
+
+#### Culling Functions
+
+1) Simple case of knowing at least 1 wizard at 0 power
+
+```
+function cullTiredWizards(uint256[] calldata wizardIds) external duringCullingWindow {
+        for (uint256 i = 0; i < wizardIds.length; i++) {
+            uint256 wizardId = wizardIds[i];
+            if (wizards[wizardId].maxPower != 0 && wizards[wizardId].power == 0) {
+                delete wizards[wizardId];
+                remainingWizards--;
+
+                emit WizardElimination(wizardId);
+            }
+        }
+    }
+```
+
+2) Slightly more complicated case of knowing at any 1 wizard above mold and any 1 (or more) below mold
+
+```
+function cullMoldedWithSurvivor(uint256[] calldata wizardIds, uint256 survivor) external
+        exists(survivor) duringCullingWindow
+    {
+        uint256 moldLevel = _blueMoldPower();
+
+        require(wizards[survivor].power >= moldLevel, "Survivor isn't alive");
+
+        for (uint256 i = 0; i < wizardIds.length; i++) {
+            uint256 wizardId = wizardIds[i];
+            if (wizards[wizardId].maxPower != 0 && wizards[wizardId].power < moldLevel) {
+                delete wizards[wizardId];
+                remainingWizards--;
+
+                emit WizardElimination(wizardId);
+            }
+        }
+    }
+```
+
+3. More complicated case of all knowing at least 6 moldy wizards and providing them in a sorted list
+
+```
+function cullMoldedWithMolded(uint256[] calldata moldyWizardIds)
+external duringCullingWindow {
+        uint256 currentId;
+        uint256 currentPower;
+        uint256 previousId = moldyWizardIds[0];
+        uint256 previousPower = wizards[previousId].power;
+
+        require(previousPower < _blueMoldPower(), "Not moldy");
+
+        for (uint256 i = 1; i < moldyWizardIds.length; i++) {
+            currentId = moldyWizardIds[i];
+            checkExists(currentId);
+            currentPower = wizards[currentId].power;
+            
+            require(
+                (currentPower < previousPower) ||
+                ((currentPower == previousPower) && (currentId > previousId)),
+                "Wizards not strictly ordered");
+
+            if (i >= 5)
+            {
+                delete wizards[currentId];
+                remainingWizards--;
+
+                emit WizardElimination(currentId);
+            }
+
+            previousId = currentId;
+            previousPower = currentPower;
+        }
+    }
+```
+
+#### Time Restrictions
+
+The rules of a CheezeWizard tournament place several restrictions on when a tired or molded wizard can be culled:
+
+- Wizards can only be culled during the Elimination phase of a tournament. This begins at a set block and lasts until there is a winner (or winners) 
+- During Elimination, a wizard can only be culled within a specific "culling window," one of four segments of a repeating session 
+- Only wizards with 0 remaining power, or power below the mold level, are cullable. Thus, it's possible that no wizards are eligible to be culled in a given window
+
+The life cycle of when TheButton is clickable might look something like this (not to scale) diagram. Only the carrots represent time when TheButton can be clicked.
+
+......................................^...^.......^...^...^...^...^....
+|                                  |  |       |                       |
+1                                  2  3       4                       5
+
+1. tournament begins
+2. elimination phase begins
+3. valid culling window + wizards to cull
+4. valid culling window but no wizards to cull
+5. valid winner, tournament ends
   
 #### Smart Contract Wrapper
 - all calls via ui go via "ghost" erc721 wrapper that makes cull call to tournament contract
 - fail early if cull is invalid to save gas
 - copy wizard culled from memory and invert to negative numbers, then mint to `tx.origin`
-- goals: single struct of tightly packed storage for new wiz
+- goals: single struct of tightly packed storage for new wiz 
+- invert traits to negative evm word range `( < 0)`
+- traits should be: id, owner, and either inate power or maxPower from tournament
 
 #### Web3-Aware Scripts
 - goals: light enough to not need a database and have everything run on-demand, client-side
@@ -62,14 +178,18 @@ This project is a submission for the 2019 [CheezeWizards/CoinList](https://coinl
 - "dumb" mode would look for 0 power wizards first and use the cullTiredWizards method
 - other methods need some level or sorting/searching for a valid proof
 - consider tradeoffs between using web3-focused react frameworks like web3-react, rimble, or drizzle vs. simpler but hackier custom solution
-- is there a bitshift/binary operartion to flip the sign of `uint` to a negative `int` that's cheaper than `*= -1`?
+- is there a bitshift/binary operation to flip the sign of `uint` to a negative `int` that's cheaper than `*= -1`?
+- what's the easiest way to represent the image for the "ghost" nft? just call the api but display with a 90% opacity white mask, etc?
 
 ### Possible Extensions
 
 Ways I could make this more complicated than it needs to be, but probably shouldn't:
 
-- possible "advanced mode" that allows more customization for culling settings in the UI
-- methods for all erc721 functionality for "ghost" wizards, transfer, approve, etc
+- possible "advanced mode" that allows more customization of culling settings in the UI
+- provide interface with methods for all erc721 functionality for "ghost" wizards: transfer, approve, etc
+- "extra advanced mode" for max truslessness that does the wizard sorting via on-chain [binary heap](https://github.com/zmitton/eth-heap) or sim
+- ensure the NFTs minted are compatible with future tournaments
+- leaderboard for most culled/most power culled
 
 ### CheezeWizards Smart Contracts in Detail
 
