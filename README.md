@@ -28,9 +28,9 @@ TheButton hopes to transform this complicated/boring/mean task into a simple, ad
 
 #### Goals
 
-- abstract away the complexity identify/validation cullable wizards with a dead-simple single button interface
+- abstract away the complexity identify/validation cullable wizards with a dead-simple single button interface. the button should look really good
 - embrace the meanness of permanently eliminating wizards with cheeky dark humour
-- provide an incentive by minting "ghost wizard" NFTs with the inverse stats of wizard culled (eg, their id, power, and affliation is `int = -1 * uint` of the wizard culled). "ghost wizards" only have negative numbers
+- provide an incentive by minting "ghost wizard" NFTs with the inverse stats of wizard culled (eg, their id, power, and affiliation is `int = -1 * uint` of the wizard culled). "ghost wizards" only have negative numbers
 
 #### Scope / Restrictions
 
@@ -133,7 +133,7 @@ The rules of a CheezeWizard tournament place several restrictions on when a tire
 - During Elimination, a wizard can only be culled within a specific "culling window," one of four segments of a repeating session 
 - Only wizards with 0 remaining power, or power below the mold level, are cullable. Thus, it's possible that no wizards are eligible to be culled in a given window
 
-(add diagram, formated correctly)
+(add diagram, formatted correctly)
   
 #### Smart Contract Wrapper
 - all calls via ui go via "ghost" erc721 wrapper that makes cull call to tournament contract
@@ -141,7 +141,10 @@ The rules of a CheezeWizard tournament place several restrictions on when a tire
 - copy wizard culled from memory and invert to negative numbers, then mint to `tx.origin`
 - goals: single struct of tightly packed storage for new wiz 
 - invert traits to negative evm word range `( < 0)`
-- traits should be: id, owner, and either inate power or maxPower from tournament
+- traits should be: id, owner, and either innate power or maxPower from tournament
+- the GhostGuild contract
+	- interface only with tournament? not official guild contract?
+	- can it still *seem* erc721 compliant but remove/not implement some of the methods like `approveForAll` and `"safe"transferFrom`?
 
 #### Web3-Aware Scripts
 - goals: light enough to not need a database and have everything run on-demand, client-side
@@ -152,6 +155,11 @@ The rules of a CheezeWizard tournament place several restrictions on when a tire
 - handle in-progress txs
 - error handling with failed txs
 - handle successful culling/minting
+
+#### Middleware Server
+- was hoping not to need this but think I'll need to route any requests to the alchemy api via my own backend 
+- could be simple node/express set up just to keep api key private
+- could also have some smarter caching logic
 
 #### User Interface
 - single large button that is greyed out unless a wizard can be culled
@@ -167,6 +175,7 @@ The rules of a CheezeWizard tournament place several restrictions on when a tire
 - consider tradeoffs between using web3-focused react frameworks like web3-react, rimble, or drizzle vs. simpler but hackier custom solution
 - is there a bitshift/binary operation to flip the sign of `uint` to a negative `int` that's cheaper than `*= -1`?
 - what's the easiest way to represent the image for the "ghost" nft? just call the api but display with a 90% opacity white mask, etc?
+- would it be smarter to just have simple database that does 1 full sort/calc per session and updates a list/tree via events? or are the wizard numbers small enough to just do recalc in browser for new each user? 
 
 ### Possible Extensions
 
