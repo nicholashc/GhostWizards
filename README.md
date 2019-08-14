@@ -90,7 +90,7 @@ function cullMoldedWithSurvivor(uint256[] calldata wizardIds, uint256 survivor) 
 }
 ```
 
-3. More complicated case of all knowing at least 6 moldy wizards and providing them in a sorted list
+3. More complicated case of all knowing at least 6 moldy wizards and providing them in a sorted list. Only useful if *all* wizards are below mold level or in naive search through an unsorted list.
 
 ```javascript
 function cullMoldedWithMolded(uint256[] calldata moldyWizardIds) external duringCullingWindow {
@@ -134,7 +134,63 @@ The rules of a CheezeWizard tournament place several restrictions on when a tire
 - Only wizards with 0 remaining power, or power below the mold level, are cullable. Thus, it's possible that no wizards are eligible to be culled in a given window
 
 (add diagram, formatted correctly)
-  
+
+#### Validing / Sorting Cullable Wizards
+
+It turns out this project requires me to think a lot more about sorting/searching complexity than I expected. 
+
+Current relevant assumptions:
+
+- At the start of Elimination Phase:
+	- `_blueMoldPower()` is fixed
+	- `remainingWizards` must be equal the total number of wizards in existance (as all presale or newly summoned wizards must enter the tournament and none can be removed before elimination)
+	- because there are non-consequitive and unissued blocks of wizard ids, in a naively-sorted list of wizard ids a given id can be greater than the index of its position in an sorted array of `remainingWizards` 
+- During elimination:
+	- `_blueMoldPower()` doubles at a predictable block interval
+	- `remainingWizards` can only go down or remain the same
+	- `remainingWizards` can only change during a culling window
+	- the length of a naive array of battleWizards follows the same rules as `remainingWizards` 
+	- for any wizard in this naive array: its id cannot change, its power and molded status can change
+
+Given these assumptions, TheButton needs to know at most:
+
+-  At the start of Elimination Phase:
+	-  `wizardsLeft[]`: some set of the ids of all remaining wizards
+
+-  At the start of every Culling Window:
+	-  `wizardsLeft[]`: a set containing the same or a reduction of the previous `wizardsLeft[]` entries
+	-  their power level
+	-  either the mold level / or their molded status
+
+- Within a Culling Window:
+	- any wizard perminantly eliminated and thus removed from `wizardsLeft[]`
+
+##### Determining Valid Wizards for Elimination:
+
+(options by naivity)
+
+###### probably naive non-sorting
+- 1) starting at 0, call getWizard in a loop for every number until a valid solution is found (note: will revert onchain if id is invalid) 
+- 2) at the start of elimination, store the full set of valid ids and only loop through that set until a valid solution is found
+- 3) remove entries when eliminated, otherwise do the same as 2)
+
+note: traversing the full list is only necessary if trying to display the total number of cullable wizards, and it does not actually have to be sorted, just keyed. simple search for the first valid solution could use an unsorted list
+
+###### naive-ish sorting
+4) at the start each culling window, sort via bubble, selection, insertion, etc 
+
+###### less naive-ish sorting
+5) at the start each culling window: sort via merge, heap, quick, etc 
+
+###### unknown level of naivity
+6) just rely on node/javascript's default `.sort()` being optimized for time complexity and/or the data set being small enough for this not to matter
+
+##### Where to implement this logic:
+
+- onchain? (probably not if sorting/looping)
+- client side? (maybe but would require lots of duplication)
+- backend? (probably most efficient but requires building a backend)
+
 #### Smart Contract Wrapper
 - all calls via ui go via "ghost" erc721 wrapper that makes cull call to tournament contract
 - fail early if cull is invalid to save gas
@@ -176,6 +232,7 @@ The rules of a CheezeWizard tournament place several restrictions on when a tire
 - is there a bitshift/binary operation to flip the sign of `uint` to a negative `int` that's cheaper than `*= -1`?
 - what's the easiest way to represent the image for the "ghost" nft? just call the api but display with a 90% opacity white mask, etc?
 - would it be smarter to just have simple database that does 1 full sort/calc per session and updates a list/tree via events? or are the wizard numbers small enough to just do recalc in browser for new each user? 
+- how to resolve conflict of getWizard(uint256) in tournament vs guild contracts? 
 
 ### Possible Extensions
 
