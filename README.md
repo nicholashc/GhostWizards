@@ -2,7 +2,7 @@
 
 This project is a submission for the 2019 [CheezeWizards/CoinList](https://coinlist.co/build/cheezewizards) hackathon. Before the Sept 1st, 2019 deadline this repo will be a relatively chaotic dumping group for brainstorming, research, and prototyping. The title, description, and (potentially) the overall concept may change before then.
 
-> **Aug 16 Progress Update**: the main components have all been considered/designed/prototyped. Refer to [Concept](#Concept) for a summary of the concept/goals/scope. The [animated UI/UX mockup mp4](../blob/master/ui_ux/ux/ux_video/ux_sequence.mp4) of the main experience is another good place to start. Large sections of the research/technical prototypes exist but are not yet in this repo.
+> **Aug 16 Progress Update**: the main components have all been considered/designed/prototyped. Refer to [Concept](#Concept) for a summary of the concept/goals/scope. The [animated UI/UX mockup mp4](./blob/master/ui_ux/ux/ux_video/ux_sequence.mp4) of the main experience is another good place to start. Large sections of the research/technical prototypes exist but are not yet in this repo.
 > 
 > **Reader Beware**: certain parts of this README are basically meta "notes to self" for the time being.\
 
@@ -39,7 +39,7 @@ In order to *fully* eliminate a wizard, someone needs to actually call a functio
 
 TheButton hopes to transform this complicated/boring/mean task into a simple, addictive experience. It might look something like this:
 
-![ui_mockup](../blob/master/ui_ux/ux/keyframes/ux_4%402x.jpg)
+![ui_mockup](./blob/master/ui_ux/ux/keyframes/ux_4%402x.jpg)
 
 #### Goals
 
@@ -98,7 +98,7 @@ The scope of this project applies only to the inaugural Tournament, though may b
 - smart alerts to handle changing web3 status/txs/contract state
 - lean heavily on the style guidelines and assets provided by CheezeWizards, both because they are good and to reduce work
 - consider non-web3 familiar users and provide appropriate on-boarding. though this is truely a niche application for someone to stumble upon without context
-- the [./ui_ux/](../blob/master/ui_ux/) directory in this repo holds mockups, prototypes, and represents the general attitude towards the project's design
+- the [./ui_ux/](./blob/master/ui_ux/) directory in this repo holds mockups, prototypes, and represents the general attitude towards the project's design
 - line-weights are a bit chunky for now while, but useful for diagraming
 - personal goal: experiment with new tools/frameworks when possible (eg, all initial ui/ux prototypes are from the first day I used Adobe XD)
 
