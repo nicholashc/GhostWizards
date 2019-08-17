@@ -91,11 +91,17 @@ The scope of this project applies only to the inaugural Tournament, though may b
 #### User Interface
 
 - single large button that is greyed out unless a wizard can be culled
+
+[ui_greyed](https://github.com/nicholashc/TheButton/blob/master/ui_ux/ux/keyframes/ux_1%402x.jpg)
+
 - display two stats: blocks (abstracted as human-readable time) until next cull window, and number cullable wizards (possibly simplified to a boolean)
 - use color/writing/design elements to reinforce what information/actions are available at a given time
 - simple unintrusive approval/handling of web3
 - "ghost wizards" owned by logged in web3 user are displayed/acknowledged in some limited form
 - smart alerts to handle changing web3 status/txs/contract state
+
+[ui_alert](https://github.com/nicholashc/TheButton/blob/master/ui_ux/ux/keyframes/ux_9%402x.jpg
+
 - lean heavily on the style guidelines and assets provided by CheezeWizards, both because they are good and to reduce work
 - consider non-web3 familiar users and provide appropriate on-boarding. though this is truely a niche application for someone to stumble upon without context
 - the [./ui_ux/](https://github.com/nicholashc/TheButton/blob/master/ui_ux/) directory in this repo holds mockups, prototypes, and represents the general attitude towards the project's design
