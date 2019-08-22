@@ -16,7 +16,7 @@ contract A {
     }
 }
 
-
+//@dev naive subtraction, alt casting
 contract E {
     //221 gas optimized 0.5.11, (1000000) input, as only function in contract
     //284 gas unoptimized 0.5.11, (1000000) input
