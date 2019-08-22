@@ -3,10 +3,11 @@ pragma solidity 0.5.11;
 // tests for most gas efficient way to flip a uint to the equiviliant negative int value
 // they were all tested in remix 0.5.11 with optimizer off and optimizer on at 200 cycles
 // they are the only functions in each contract because the evm adds 20 gas for each additional function or external variable ... 😡
-// splitting hairs on gas differences here so probabaly wasn't worth the effort
+// splitting hairs on gas differences here so probabaly wasn't worth the effort. the naive methods were actually slightly more efficient 
 // ranked in order off optimized gas execuition cost, then unoptimized
 // can also test wider range of inputs
 
+//@dev naive subtraction
 contract A {
     //221 gas optimized 0.5.11, (1000000) input, as only function in contract
     //284 gas unoptimized 0.5.11, (1000000) input, as only function in contract
@@ -25,11 +26,11 @@ contract E {
 }
 
 
+//@dev assembly subtraction
 contract G {
     //221 gas unoptimized 0.5.11, (1000000) input, as only function in contract
     //284 gas unoptimized 0.5.11, (1000000) input, as only function in contract
     function flip(uint256 _num) public pure returns(int256 res) {
-        
         assembly {
             res := sub(0, _num)
         }
@@ -37,6 +38,7 @@ contract G {
 }
 
 
+//@dev naive unary casting
 contract J {
     //221 gas unoptimized 0.5.11, (1000000) input, as only function in contract
     //284 gas unoptimized 0.5.11, (1000000) input, as only function in contract
@@ -46,6 +48,7 @@ contract J {
 }
 
 
+//@dev naive naive multiplication by -1
 contract B {
     //221 gas optimized 0.5.11, (1000000) input, as only function in contract
     //287 gas unoptimized 0.5.11, (1000000) input, as only function in contract
@@ -55,6 +58,7 @@ contract B {
 }
 
 
+//@dev naive unary casting
 contract D {
     //224 gas optimized 0.5.11, (1000000) input, as only function in contract
     //287 gas unoptimized 0.5.11, (1000000) input
@@ -64,6 +68,7 @@ contract D {
 }
 
 
+//@dev bitwise `~` NOT, casting sequence #0
 contract H {
     //224 gas unoptimized 0.5.11, (1000000) input, as only function in contract
     //287 gas unoptimized 0.5.11, (1000000) input, as only function in contract
@@ -74,7 +79,7 @@ contract H {
     }
 }
 
-
+//@dev bitwise `~` NOT, alt casting sequence #1
 contract C {
     //224 gas optimized 0.5.11, (1000000) input, as only function in contract
     //309 gas unoptimized 0.5.11, (1000000) input
@@ -83,7 +88,7 @@ contract C {
     }
 }
 
-
+//@dev bitwise `~` NOT, alt casting sequence #2
 contract F {
     //227 gas optimized 0.5.11, (1000000) input, as only function in contract
     //287 gas unoptimized 0.5.11, (1000000) input
@@ -92,7 +97,7 @@ contract F {
     }
 }
 
-
+//@dev `not` opcode in assembly
 contract I {
     //227 gas unoptimized 0.5.11, (1000000) input, as only function in contract
     //287 gas unoptimized 0.5.11, (1000000) input, as only function in contract
@@ -103,7 +108,7 @@ contract I {
     }
 }
 
-
+//@dev bitwize XOR with bitmask
 contract K {
     //230 gas unoptimized 0.5.11, (1000000) input, as only function in contract
     //290 gas unoptimized 0.5.11, (1000000) input, as only function in contract
