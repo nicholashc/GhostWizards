@@ -19,7 +19,9 @@ This project is a submission for the 2019 [CheezeWizards/CoinList](https://coinl
 
 TheButton is an interface and incentive structure for permanently eliminating wizards from the inaugural CheezeWizards Tournament. It transforms the complicated, boring, and slightly-sadistic task of sorting the winners from the losers into a single button click. To reward clickers for their gas and service, they will receive a unique "ghost wizard" NFT with the (inverted) traits of the loser they eliminated. Dosen't it feel good to be mean?
 
-If you already know what words like CheezeWizards, NFT, and Tournament mean, feel free to skip ahead to [Concept](#Concept). 
+If you already know what words like CheezeWizards, NFT, and Tournament mean, feel free to skip ahead to [Concept](#Concept). Otherwise, here's a sneak peak of what TheButton might look like.
+
+![ux_sequence](https://github.com/nicholashc/TheButton/blob/master/ui_ux/ux/ux_video/ux_sequence_720.gif)
 
 #### Context
 
