@@ -112,23 +112,115 @@ The scope of this project applies only to the inaugural Tournament, though may b
 
 #### Data Needed / Available
 
+Aug 20 Note: the time and mold parameters are now public 🙏. This simplies the project and negates many of the assumptins bellw.
+
 ###### Available on chain:
-  - individual wizard battle power levels and molded status via `getWizard()`
-  - three functions to cull wizards with different criteria, which could provide counterfactual info via revereted transactions
+
+Wizard-related data:
+
+```javascript
+function getWizard(uint256 wizardId) public view exists(wizardId) returns(
+        uint256 affinity,
+        uint256 power,
+        uint256 maxPower,
+        uint256 nonce,
+        bytes32 currentDuel,
+        bool ascending,
+        uint256 ascensionOpponent,
+        bool molded,
+        bool ready
+    ) {
+        BattleWizard memory wizard = wizards[wizardId];
+
+        affinity = wizard.affinity;
+        power = wizard.power;
+        maxPower = wizard.maxPower;
+        nonce = wizard.nonce;
+        currentDuel = wizard.currentDuel;
+
+        ascending = ascendingWizardId == wizardId;
+        ascensionOpponent = ascensionOpponents[wizardId];
+        molded = _blueMoldPower() > wizard.power;
+        ready = _isReady(wizardId, wizard);
+    }
+```
+
+Paused-state:
+
+```javascript
+function isPaused() external view returns (bool) {
+	return block.number < tournamentTimeParameters.pauseEndedBlock;
+}
+```
+
+Remaining wizards:
+
+```javascript
+function getRemainingWizards() external view returns(uint256) {
+	return remainingWizards;
+}
+```
+
+Time parameters:
+
+```javascript
+function getTimeParameters() external view returns (
+    uint256 tournamentStartBlock,
+    uint256 pauseEndedBlock,
+    uint256 admissionDuration,
+    uint256 revivalDuration,
+    uint256 duelTimeoutDuration,
+    uint256 ascensionWindowStart,
+    uint256 ascensionWindowDuration,
+    uint256 fightWindowStart,
+    uint256 fightWindowDuration,
+    uint256 resolutionWindowStart,
+    uint256 resolutionWindowDuration,
+    uint256 cullingWindowStart,
+    uint256 cullingWindowDuration) {
+    return (
+        uint256(tournamentTimeParameters.tournamentStartBlock),
+        uint256(tournamentTimeParameters.pauseEndedBlock),
+        uint256(tournamentTimeParameters.admissionDuration),
+        uint256(tournamentTimeParameters.revivalDuration),
+        uint256(tournamentTimeParameters.duelTimeoutDuration),
+        uint256(ascensionWindowParameters.firstWindowStartBlock),
+        uint256(ascensionWindowParameters.windowDuration),
+        uint256(fightWindowParameters.firstWindowStartBlock),
+        uint256(fightWindowParameters.windowDuration),
+        uint256(resolutionWindowParameters.firstWindowStartBlock),
+        uint256(resolutionWindowParameters.windowDuration),
+        uint256(cullingWindowParameters.firstWindowStartBlock),
+        uint256(cullingWindowParameters.windowDuration));
+}
+```
+
+Mold status:
+
+```javascript
+function getBlueMoldParameters() external view returns (uint256, uint256, uint256, uint256) {
+    return (
+        blueMoldParameters.blueMoldStartBlock,
+        blueMoldParameters.sessionDuration,
+        blueMoldParameters.moldDoublingDuration,
+        blueMoldParameters.blueMoldBasePower
+    );
+}
+```
+
+- three functions to cull wizards with different criteria, which could provide counterfactual info via revereted transactions
 
 ###### Available off chain via api:
   - lots of the same wizard data that could be requested and sorted in bulk 
-  - unknown how in sync this will be during the tournament
-  - requires sending a key/email in the header, which should be concealed from users
+  - unknown how in-sync this will be during the tournament
+  - requires sending a key/email in the request header, which should be concealed from users via middleware router
+  - unknown if/when additional data will be added to alchemy api
 
 ###### Suprisingly unavailable directly in the current contracts, requiring a new solution:
-  - is it the elimination phase?
-  - is it the culling window?
-  - what is the mold level?
-  - which wizards have power below mold or 0?
-  - which wizards have power above mold?
-  - how many remaining wizards are there?
-  - what are the ids of the remaining wizards?
+  - ~~is it the elimination phase?~~
+  - ~~is it the culling window?~~
+  - ~~what is the mold level?~~
+  - ~~how many remaining wizards are there?~~
 
 #### Culling Functions
 
@@ -250,6 +342,8 @@ Given these assumptions, TheButton needs to know at most:
 ##### Determining Valid Wizards for Elimination:
 
 (roughly ordered by naivety)
+
+First, check if it is a valid Culling window in the Elmination Phase.
 
 ###### probably naive un-sorted approach
 
