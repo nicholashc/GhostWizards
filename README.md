@@ -2,7 +2,7 @@
 
 This project is a submission for the 2019 [CheezeWizards/CoinList](https://coinlist.co/build/cheezewizards) hackathon. Before the Sept 1st, 2019 deadline this repo will be a relatively chaotic dumping group for brainstorming, research, and prototyping. The title, description, and (potentially) the overall concept may change before then.
 
-> **Aug 16 Progress Update**: the main components have all been considered/designed/prototyped. Refer to [Concept](#Concept) for a summary of the concept/goals/scope. The [animated UI/UX mockup mp4](https://github.com/nicholashc/TheButton/blob/master/ui_ux/ux/ux_video/) of the main experience is another good place to start. Large sections of the research/technical prototypes exist but are not yet in this repo.
+> **Aug 16 Progress Update**: the main components have all been considered/designed/prototyped. Refer to [Concept](#Concept) for a summary of the concept/goals/scope. The [animated UI/UX mockup mp4](https://github.com/nicholashc/GhostWizards/blob/master/ui_ux/ux/ux_video/) of the main experience is another good place to start. Large sections of the research/technical prototypes exist but are not yet in this repo.
 > 
 > **Reader Beware**: certain parts of this README are basically meta "notes to self" for the time being.
 
@@ -17,11 +17,11 @@ This project is a submission for the 2019 [CheezeWizards/CoinList](https://coinl
 
 ### High_Level_Overview
 
-TheButton is an interface and incentive structure for permanently eliminating wizards from the inaugural CheezeWizards Tournament. It transforms the complicated, boring, and slightly-sadistic task of sorting the winners from the losers into a single button click. To reward clickers for their gas and service, they will receive a unique "ghost wizard" NFT with the (inverted) traits of the loser they eliminated. Dosen't it feel good to be mean?
+GhostWizards is an interface and incentive structure for permanently eliminating wizards from the inaugural CheezeWizards Tournament. It transforms the complicated, boring, and slightly-sadistic task of sorting the winners from the losers into a single button click. To reward clickers for their gas and service, they will receive a unique "Ghost Wizard" NFT with the (inverted) traits of the loser they eliminated. Dosen't it feel good to be mean?
 
-If you already know what words like CheezeWizards, NFT, and Tournament mean, feel free to skip ahead to [Concept](#Concept). Otherwise, here's a sneak peak of what TheButton might look like.
+If you already know what words like CheezeWizards, NFT, and Tournament mean, feel free to skip ahead to [Concept](#Concept). Otherwise, here's a sneak peak of what GhostWizards might look like.
 
-![ux_sequence](https://github.com/nicholashc/TheButton/blob/master/ui_ux/ux/ux_video/ux_sequence_720.gif)
+![ux_sequence](https://github.com/nicholashc/GhostWizards/blob/master/ui_ux/ux/ux_video/ux_sequence_720.gif)
 
 #### Context
 
@@ -33,15 +33,15 @@ Tournaments are special events in which wizards battle to win a prize called The
 
 In order to win the tournament, a single wizard needs to be the last one standing and thus have the highest power level. Power can be transferred from duels (which are a bit like rock, paper, scissors, but more complicated and with more magic). Power is also generated/transferred through mechanisms like ascension, gifting, and revival. 
 
-Beyond duals, wizards also need to worry about an unstoppable force called "The Blue Mold." It has its own always-rising power level that will eventually surpass even the most powerful wizard. Wizards who have 0 power left, or whose power is lower than the Blue Mold level, are essentially eliminated, but not *technically*. This is where TheButton comes in.
+Beyond duals, wizards also need to worry about an unstoppable force called "The Blue Mold." It has its own always-rising power level that will eventually surpass even the most powerful wizard. Wizards who have 0 power left, or whose power is lower than the Blue Mold level, are essentially eliminated, but not *technically*. This is where GhostWizards comes in.
 
 #### Concept
 
 In order to *fully* eliminate a wizard, someone needs to actually call a function in the tournament smart contract. This ensures that the particular wizard deserves elimination based on the rules of the tournament. It also permanently etches the elimination in the "immutable ledger of The Blockchain". At the moment, there's little incentive for 99% of players to call these functions, especially if they were eliminated. The gas cost, potentially complex proofs, and lack of incentives, means most players won't bother.
 
-TheButton hopes to transform this complicated/boring/mean task into a simple, addictive experience. It might look something like this:
+GhostWizards hopes to transform this complicated/boring/mean task into a simple, addictive experience. It might look something like this:
 
-![ui_mockup](https://github.com/nicholashc/TheButton/blob/master/ui_ux/ux/keyframes/ux_4%402x.jpg)
+![ui_mockup](https://github.com/nicholashc/GhostWizards/blob/master/ui_ux/ux/keyframes/ux_4%402x.jpg)
 
 #### Goals
 
@@ -52,11 +52,11 @@ TheButton hopes to transform this complicated/boring/mean task into a simple, ad
 
 #### Scope / Restrictions
 
-The scope of this project applies only to the inaugural Tournament, though may be used adapted freely for future tournaments. TheButton will only be available during limited intervals based on the specific rules and conditions in The Tournament. Scope is further restricted by the goals and limitations of its single author. 
+The scope of this project applies only to the inaugural Tournament, though may be used adapted freely for future tournaments. GhostWizards will only be available during limited intervals based on the specific rules and conditions in The Tournament. Scope is further restricted by the goals and limitations of its single author. 
   
 ### Core_Components
 
-*Note: the official CW contracts will likely be revised before launch. I don't know if this will just involve minor bug fixes or substantial changes in core logic. This could affect some of the large design choices about how TheButton will/can/should work. I've also learned that Dapper plans to run a "culling bot" for the inaugural Tournament, which changes some of these plans.*
+*Note: the official CW contracts will likely be revised before launch. I don't know if this will just involve minor bug fixes or substantial changes in core logic. This could affect some of the large design choices about how GhostWizards will/can/should work. I've also learned that Dapper plans to run a "culling bot" for the inaugural Tournament, which changes some of these plans.*
 
 #### Smart Contract Wrapper
 
@@ -67,7 +67,7 @@ The scope of this project applies only to the inaugural Tournament, though may b
 - stats should fit single struct of tightly packed storage for each wizard 
 - invert traits to negative EVM word range `( < 0)` via the best gas efficient method possible
 - traits should be: id, owner, and either innate power or maxPower from tournament (maxPower easier to obtain)
-- 	GhostGuild will implement a restricted version of the ERC-721 standard, while still publicly presenting a valid/interoperable interface. No `approveForAll()`. No `safeTransferFrom()`. Maybe even no `approve()`. (I'll expand on these design choices at a later time, but it's mainly to strike a different balance between security & user error/permissions than currently exists in the standard)
+- GhostGuild will implement a restricted version of the ERC-721 standard, while still publicly presenting a valid/interoperable interface. No `approveForAll()`. No `safeTransferFrom()`. Maybe even no `approve()`. (I'll expand on these design choices at a later time, but it's mainly to strike a different balance between security & user error/permissions than currently exists in the standard)
 
 #### Web3-Aware Scripts
 
@@ -94,7 +94,7 @@ The scope of this project applies only to the inaugural Tournament, though may b
 
 - single large button that is greyed out unless a wizard can be culled
 
-![ui_greyed](https://github.com/nicholashc/TheButton/blob/master/ui_ux/ux/keyframes/ux_1%402x.jpg)
+![ui_greyed](https://github.com/nicholashc/GhostWizards/blob/master/ui_ux/ux/keyframes/ux_1%402x.jpg)
 
 - display two stats: blocks (abstracted as human-readable time) until next cull window, and number cullable wizards (possibly simplified to a boolean)
 - use color/writing/design elements to reinforce what information/actions are available at a given time
@@ -102,11 +102,11 @@ The scope of this project applies only to the inaugural Tournament, though may b
 - "ghost wizards" owned by logged in web3 user are displayed/acknowledged in some limited form
 - smart alerts to handle changing web3 status/txs/contract state
 
-![ui_alert](https://github.com/nicholashc/TheButton/blob/master/ui_ux/ux/keyframes/ux_9%402x.jpg)
+![ui_alert](https://github.com/nicholashc/GhostWizards/blob/master/ui_ux/ux/keyframes/ux_9%402x.jpg)
 
 - lean heavily on the style guidelines and assets provided by CheezeWizards, both because they are good and to reduce work
 - consider non-web3 familiar users and provide appropriate on-boarding. though this is truely a niche application for someone to stumble upon without context
-- the [./ui_ux/](https://github.com/nicholashc/TheButton/blob/master/ui_ux/) directory in this repo holds mockups, prototypes, and represents the general attitude towards the project's design
+- the [./ui_ux/](https://github.com/nicholashc/GhostWizards/blob/master/ui_ux/) directory in this repo holds mockups, prototypes, and represents the general attitude towards the project's design
 - line-weights are a bit chunky for now while, but useful for diagraming
 - personal goal: experiment with new tools/frameworks when possible (eg, all initial ui/ux prototypes are from the first day I used Adobe XD)
 
@@ -114,7 +114,7 @@ The scope of this project applies only to the inaugural Tournament, though may b
 
 #### Data Needed / Available
 
-Aug 20 Note: the time and mold parameters are now public 🙏. This simplies the project and negates many of the assumptins bellw.
+Aug 20 Note: the time and mold parameters are now public 🙏. This simflifies the project and negates many of the assumptins bellow.
 
 ###### Available on chain:
 
@@ -326,7 +326,7 @@ It turns out this project requires me to think a lot more about sorting/searchin
 	- the length of a naive array of battleWizards follows the same rules as `remainingWizards` 
 	- for any wizard in this naive array: its id cannot change, its power and molded status can change
 
-Given these assumptions, TheButton needs to know at most:
+Given these assumptions, GhostWizards needs to know at most:
 
 -  At the start of Elimination Phase:
 	-  `wizardsLeft[]`: which is some hypothetical set of the ids of all remaining wizards who are above the mold level
@@ -373,7 +373,7 @@ Note: traversing the full list is only necessary if trying to display the total 
 - should it always be 1 press of the button == 1 cull? or should users be given the option of batching?
 - is there a bitshift/binary operation to flip the sign of `uint` to a negative `int` that's cheaper than the ~230 gas of optimized solidity `*= -1`? 
 - what's the easiest way to represent the image for the "ghost" nft? and am i allowed to modify/reuse/represent the images without unintenionally producing legal/liability issues? perhaps just directly show the true image from the CW api but display with a 90% opacity white mask, or something similarly dumb but effective? 
-- new info: for the inaugural tournament CW plans to run a bot/manually cull wizards. how will this operate? at what interval? how will it affect TheButton?
+- new info: for the inaugural tournament CW plans to run a bot/manually cull wizards. how will this operate? at what interval? how will it affect GhostWizards?
 
 ### Possible_Extensions
 
@@ -383,7 +383,7 @@ Ways I could make this more complicated than it needs to be, but almost certainl
 - provide interface with methods for all erc721 functionality for "ghost" wizards: transfer, approve, etc
 - "extra advanced mode" for max trustlessness that does the wizard sorting via on-chain [binary heap](https://github.com/zmitton/eth-heap) or sim
 - ensure the NFTs minted are compatible with future tournaments
-- leaderboard for most culled/most power culled through TheButton
+- leaderboard for most culled/most power culled through GhostWizards
 - front-run the Dapper culling bots as an alt method of getting valid proofs 
 
 ### CheezeWizards_Smart_Contracts_in_Detail
