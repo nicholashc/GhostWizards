@@ -1,9 +1,10 @@
 pragma solidity 0.5.11;
 
 contract TournamentInterface {
-    function cullMoldedWithSurvivor(uint256[] calldata wizardIds, uint256 survivor) external {}
-    function cullMoldedWithMolded(uint256[] calldata moldyWizardIds) external {}
-    function cullTiredWizards(uint256[] calldata wizardIds) external {}
+    function isActive() public view returns (bool) {}
+    
+    function isPaused() external view returns (bool) {}
+    
     function getWizard(uint256 wizardId) public view returns(// note exists(wizardId) modifer removed
         uint256 affinity,
         uint256 power,
@@ -15,6 +16,37 @@ contract TournamentInterface {
         bool molded,
         bool ready
     ) {}
+    
+    function getTimeParameters() external view returns (
+        uint256 tournamentStartBlock,
+        uint256 pauseEndedBlock,
+        uint256 admissionDuration,
+        uint256 revivalDuration,
+        uint256 duelTimeoutDuration,
+        uint256 ascensionWindowStart,
+        uint256 ascensionWindowDuration,
+        uint256 fightWindowStart,
+        uint256 fightWindowDuration,
+        uint256 resolutionWindowStart,
+        uint256 resolutionWindowDuration,
+        uint256 cullingWindowStart,
+        uint256 cullingWindowDuration
+    ) {}
+    
+    function getBlueMoldParameters() external view returns (
+        uint256 blueMoldStartBlock,        
+        uint256 sessionDuration,
+        uint256 moldDoublingDuration, 
+        uint256 blueMoldBasePower
+    ) {}
+    
+    function cullMoldedWithSurvivor(uint256[] calldata wizardIds, uint256 survivor) external {}
+    
+    function cullMoldedWithMolded(uint256[] calldata moldyWizardIds) external {}
+    
+    function cullTiredWizards(uint256[] calldata wizardIds) external {}
+    
+    
 }
 
 contract NotIERC721 {
@@ -115,12 +147,49 @@ contract GhostGuild is TournamentInterface, GhostWizardNFT {
         t = TournamentInterface(tournament);
     }
 
-    function cullAndMint(uint256 _wizId) external returns (int256) {
-        //validate cull
+    function cullTiredWizardsProxy(uint256[] calldata _wizId, address _tournament) external {
+        
+        //instantiate interfaceId
+        TournamentInterface t = TournamentInterface(_tournament);
+        require (isValidCull(_tournament), "invalid culling period")
+        
         //perform cull
         //flip uint to int
         //mint ghost wizard
-        //return id
+        //emit event
+    }
+    
+    function cullMoldedWithSurvivorProxy(uint256[] calldata wizardIds, uint256 survivor, address _tournament) external {
+        
+        //instantiate interfaceId
+        TournamentInterface t = TournamentInterface(_tournament);
+        require (isValidCull(_tournament), "invalid culling period")
+        
+        //perform cull
+        //flip uint to int
+        //mint ghost wizard
+        //emit event
+    }
+    
+    function cullMoldedWithMoldedProxy(uint256[] calldata moldyWizardIds, address _tournament) external {
+        
+        //instantiate interfaceId
+        TournamentInterface t = TournamentInterface(_tournament);
+        require (isValidCull(_tournament), "invalid culling period")
+        
+        //perform cull
+        //flip uint to int
+        //mint ghost wizard
+        //emit event
+    }
+    
+    function isValidCull(address _tournament) public returns (bool) {
+        //fail early is most likely invalid scenarios
+        require (t.isActive(), "the tournament is not active");
+        require (t.isPaused(), "the tournament is paused");
+        require ()
+        TournamentInterface t = TournamentInterface(_tournament);
+        return true;
     }
 
     //convert uint to int
