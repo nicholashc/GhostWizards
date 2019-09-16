@@ -19,7 +19,7 @@ contract A {
 //@dev naive subtraction, alt casting
 contract E {
     //221 gas optimized 0.5.11, (1000000) input, as only function in contract
-    //284 gas unoptimized 0.5.11, (1000000) input
+    //284 gas unoptimized 0.5.11, (1000000) input, as only function in contract
     function flip(uint256 _num) public pure returns(int256) {
         return 0 - int256(_num);
     }
@@ -28,7 +28,7 @@ contract E {
 
 //@dev assembly subtraction
 contract G {
-    //221 gas unoptimized 0.5.11, (1000000) input, as only function in contract
+    //221 gas optimized 0.5.11, (1000000) input, as only function in contract
     //284 gas unoptimized 0.5.11, (1000000) input, as only function in contract
     function flip(uint256 _num) public pure returns(int256 res) {
         assembly {
@@ -40,7 +40,7 @@ contract G {
 
 //@dev naive unary casting
 contract J {
-    //221 gas unoptimized 0.5.11, (1000000) input, as only function in contract
+    //221 gas optimized 0.5.11, (1000000) input, as only function in contract
     //284 gas unoptimized 0.5.11, (1000000) input, as only function in contract
     function flip(uint256 _num) public pure returns(int256) {
         return -int256(_num);
@@ -61,7 +61,7 @@ contract B {
 //@dev naive unary casting
 contract D {
     //224 gas optimized 0.5.11, (1000000) input, as only function in contract
-    //287 gas unoptimized 0.5.11, (1000000) input
+    //287 gas unoptimized 0.5.11, (1000000) input, as only function in contract
     function flip(uint256 _num) public pure returns(int256) {
         return int256(~_num+1);
     }
@@ -91,7 +91,7 @@ contract C {
 //@dev bitwise `~` NOT, alt casting sequence #2
 contract F {
     //227 gas optimized 0.5.11, (1000000) input, as only function in contract
-    //287 gas unoptimized 0.5.11, (1000000) input
+    //287 gas unoptimized 0.5.11, (1000000) input, as only function in contract
     function flip(uint256 _num) public pure returns(int256) {
         return ~int256(_num-1);
     }
@@ -99,7 +99,7 @@ contract F {
 
 //@dev `not` opcode in assembly
 contract I {
-    //227 gas unoptimized 0.5.11, (1000000) input, as only function in contract
+    //227 gas optimized 0.5.11, (1000000) input, as only function in contract
     //287 gas unoptimized 0.5.11, (1000000) input, as only function in contract
     function flip(uint256 _num) public pure returns(int256 res) {
         assembly {
@@ -110,7 +110,7 @@ contract I {
 
 //@dev bitwize XOR with bitmask
 contract K {
-    //230 gas unoptimized 0.5.11, (1000000) input, as only function in contract
+    //230 gas optimized 0.5.11, (1000000) input, as only function in contract
     //290 gas unoptimized 0.5.11, (1000000) input, as only function in contract
     function flip(uint256 _num) public pure returns(int256) {
         return int256(_num ^ 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff) + 1;
