@@ -1,5 +1,9 @@
 pragma solidity 0.5.11;
 
+//TODO: 
+//add erc721 actual functionality
+//get ghostWiz stats
+
 contract TournamentInterface {
     function isActive() public view returns (bool) {}
     
