@@ -26,12 +26,12 @@ Surprise! Ghost Wizards was a speculative research project all along.
 
 ### Table of Contents
 
-- [High-Level Overview](#High Level Overview)
-- [Core Components](#Core Components)
-- [Technical Considerations](#Technical Considerations)
-- [Possible Extensions](#Possible Extensions)
-- [CheezeWizards Smart Contracts in Detail](#CheezeWizards Smart Contracts in Detail) 
-- [Disclosure Responsibly Disclosed](#Disclosure Responsibly Disclosed)
+- [High-Level Overview](#High-Level-Overview)
+- [Core Components](#Core-Components)
+- [Technical Considerations](#Technical0Considerations)
+- [Possible Extensions](#Possible-Extensions)
+- [CheezeWizards Smart Contracts in Detail](#CheezeWizards-Smart-Contracts-in-Detail) 
+- [Disclosure Responsibly Disclosed](#Disclosure-Responsibly-Disclosed)
 
 ### High Level Overview
 
@@ -45,7 +45,7 @@ If you already know what words like CheezeWizards, NFT, and Tournament mean, fee
 
 #### Context
 
-*Note: there are many generalizations/oversimplifications in this section. [In-depth analysis](#CheezeWizards Smart Contracts in Detail) gets into the nitty gritty nuances.*
+*Note: there are many generalizations/oversimplifications in this section. [In-depth analysis](#CheezeWizards-Smart-Contracts-in-Detail) gets into the nitty gritty nuances.*
 
 CheezeWizards is a game by [DapperLabs](https://www.dapperlabs.com/). Wizards are ERC-721 tokens (Non-Fungible Tokens, or NFTs) that live on Ethereum blockchain. In plain English: each wizard is a provably unique collectable item. Each wizard has a unique id, a power level, and belongs to one of four affinities (Neutral, Fire, Water, Wind). While wizards can be bought, sold, traded, or hoarded, their main purpose is to compete in tournaments.
 
@@ -92,7 +92,7 @@ Surprise! The contracts did change and for the better. It is now much easier to 
 - GhostWizard stats should fit into single struct of tightly-packed storage for each wizard *(meta-note: one reason for the project's incompleteness was an unnecessarily long search for the perfect unicode character to represent the satisfying feeling of "something fitting just right". It doesn't exist in a single character. The closest is :relieved: :ok_hand:)*
 - Invert traits to negative EVM word range `( < 0)` via the best gas efficient method possible *(meta-note: after unnecessarily intensive optimization this turned out to be the first guess: `int256(0 - _num)`. good job compiler ¯\_(ツ)_/¯?)*
 - The traits stored should be: id, owner address, and maxPower from Tournament 
-- 	GhostGuild will implement a restricted version of the ERC-721 standard, while still publicly presenting a valid/interoperable interface. No `approveForAll()`. No `safeTransferFrom()`. Maybe even no `approve()`. *(note to reader: see the security section f [CheezeWizards Smart Contracts in Detail](#CheezeWizards Smart Contracts in Detail) to learn why trivially easy function signature spoofing + untrusted interface calls + re-entrancy with full gas passed are scary enough to trigger this level of paranoia)*
+- 	GhostGuild will implement a restricted version of the ERC-721 standard, while still publicly presenting a valid/interoperable interface. No `approveForAll()`. No `safeTransferFrom()`. Maybe even no `approve()`. *(note to reader: see the security section f [CheezeWizards Smart Contracts in Detail](#CheezeWizards-Smart-Contracts-in-Detail) to learn why trivially easy function signature spoofing + untrusted interface calls + re-entrancy with full gas passed are scary enough to trigger this level of paranoia)*
 - 	Anticipate any paradigm-shifting gotchas coming with Istanbul
 
 #### Web3-Aware Scripts
@@ -113,7 +113,7 @@ Surprise! The contracts did change and for the better. It is now much easier to 
 
 #### User Interface
 
-- Brilliant or stupid? There should only be one button and it should do everything perfectly all the time (*meta-note: the GhostWizard of Steve Jobs nods approvingly)
+- Brilliant or stupid? There should only be one button and it should do everything perfectly all the time (*meta-note: the GhostWizard of Steve Jobs nods approvingly)*
 - The single large button is greyed out unless a wizard can be culled
 
 ![ui_greyed](https://github.com/nicholashc/GhostWizards/blob/master/ui_ux/ux/keyframes/ux_1%402x.jpg)
@@ -364,8 +364,8 @@ Given these assumptions, GhostWizards needs to know at most:
 3) remove entries when eliminated, otherwise do the same as #2
 4) at the start each culling window, sort via bubble, selection, insertion, etc.
 5) at the start each culling window: sort via merge, heap, quick, etc, and store valid cullable wizards in a fully or partially balanced tree structure
-6?) *(meta-note: unknown level of naivety) just rely on node/javascript's default `.sort()` being generally optimized for time complexity and/or the data set being small enough for this not to matter. the order of magnitude of unique wizards is unlikely to exceed 10,000 in this tournament. perhaps that's small enough to just use a naive approach without affecting user experience/api loads in a meaningful way
-7?) traversing the full list is only necessary if trying to display the total number of cullable wizards, and it does not actually have to be sorted, just keyed. Simple search for the first valid solution could use an unsorted list. That's all that is required to display a boolean "is there a valid cullable wizard?" on the front end.
+6) *(meta-note: unknown level of naivety)* just rely on node/javascript's default `.sort()` being generally optimized for time complexity and/or the data set being small enough for this not to matter. the order of magnitude of unique wizards is unlikely to exceed 10,000 in this tournament. perhaps that's small enough to just use a naive approach without affecting user experience/api loads in a meaningful way
+7) traversing the full list is only necessary if trying to display the total number of cullable wizards, and it does not actually have to be sorted, just keyed. Simple search for the first valid solution could use an unsorted list. That's all that is required to display a boolean "is there a valid cullable wizard?" on the front end.
 
 ### Possible Extensions
 
@@ -388,7 +388,7 @@ The bulk of this effort never quite made the transition from note/sketch/thought
 
 #### Battles 
 
-###### Basics
+##### Basics
 - each player has five moves, committed all at once
 - each move can be one of the three elements (2,3,4)
 - moves are weighted by % in order: 78, 79, 81, 86, 100
@@ -397,7 +397,7 @@ The bulk of this effort never quite made the transition from note/sketch/thought
 - the Tournament contract passes off the tricky math to the DualResolver, then normalizes the result
 - no power is ever minted/burned from battles, only transferred
 
-###### Normal Battles
+##### Normal Battles
 - max "power at risk" is the difference between the two wizards' power levels
 - battles where wizard (A) has 7x or more power than wizard (B) are capped at 7x of B's power
 - if a battle result knocks a wizard bellow the mold level, 100% of their power goes to the winner 
@@ -405,7 +405,7 @@ The bulk of this effort never quite made the transition from note/sketch/thought
 - if a battle times out with only one player having revealed their moves, 100% of the non-responder's power is transferred
 - no wizard can ever have more than 2**88-1 power
 
-###### Ascension Battles 
+##### Ascension Battles 
 - 100% of the "power at risk" is transferred to the winner 
 - ties go to wizard with the lower ID
 - if the power differential is more than 2x the current mold power, the at risk amount is capped at the lower wizards power level
@@ -429,7 +429,7 @@ Time to let a diagram do some talking.
 
 #### Permission & Access
 
-**(meta-note: the hand-drawn diagram used to work out these relationships looks a little too unhinged to post publicly)
+*(meta-note: the hand-drawn diagrams used to work out these contract relationships looks a little too unhinged to post publicly)*
 
 **tl/dr** The Guild is the only permanent-ish contract, there could be multiple redeploys until the official Tournament starts, at the end of the day c-level permissions accounts have a lot of control. Way too much in this author's opinion.
 
@@ -441,7 +441,7 @@ Time to let a diagram do some talking.
 
 **4) Tournament** is a one time use contract that has the Guild and GateKeeper hardcoded, and sets the DuelResolver at deployment. It manages "battle clones" of the wizards participating, which are unique to that tournament. Holds the prize value and keeps track of the time/rules. It can be self-destructed after a certain length of time after the tournament ends, even if the prize isn't claimed.
 
-**5) DuelResolver ** just does fancy math and dosen't know about any other contracts. It can be reused by multiple tournaments or there could be different versions. Does not (consensually) hold ether and cannot be self-destructed. 
+**5) DuelResolver** just does fancy math and dosen't know about any other contracts. It can be reused by multiple tournaments or there could be different versions. Does not (consensually) hold ether and cannot be self-destructed. 
 
 **6) C-Levels** ultimately there are ceo/coo/cfo roles in the important contracts that have pretty widespread powers (some limits within active tournaments and closed wizard series). By proxy the ceo has every power of any role lower in the hierarchy by the ability to reset coo/cfo/gatekeeper/minter/tournament/etc.
 
@@ -492,11 +492,12 @@ In CW's implementation of `safeTransferFrom()` the following effects happen:
 - `safeTransferFrom()` accepts and then passes back a bytes argument of any length. This could hypothetically contain full code for deploying a contract or somehow be used as a payload
 - Passing the final verification is as simple as slapping `return 0x150b7a02` at the end of your function
 
-###### Simple Example
+##### Simple Example
 
 The following is a highly simplified version of the CW presale contract. I've removed most of the token logic to demonstrate the impact of this particular call. The same outcome is possible with the full contract, as long as the transfer is initiated from a valid token holder. Note that I have also removed the check for "contractness". In this case the attacker wants to be a contract. 
 
 ```
+javascript
 contract IERC721Receiver {
     function onERC721Received(address operator, address from, uint256 tokenId, bytes memory data)
     public returns (bytes4);
@@ -523,6 +524,7 @@ contract CW {
 The following malicious contract could successful accept the `onERC721Received` call from the CW example above, execute arbitrary logic including state changes, and return the correct value. The transaction would be successful.
 
 ```
+javascript
 contract Fake721{
     
 		function $$$_10284c80_$$$() public returns(bytes4) {
@@ -536,11 +538,11 @@ contract Fake721{
 }
 ```
 
-*after going over the many unsuccessful would-be-attacks I offered Dapper Labs some unsolicited contract design advice:*
+*...(after going over the many unsuccessful would-be-attacks I offered Dapper Labs some unsolicited contract design advice)...*
 
 I appreciate that many of these design choices are a direct effect of the IERC721, and other standards, as well as the Zeppelin implementations. In my opinion, you are introducing significant attack surface to go out of your way to make sure a receiver is valid, especially as standard contract-wallets like Dapper become more popular.  
 
-###### Suggestions
+##### Suggestions
 
 - Set reasonable gas stipends forwards to all untrusted external calls, even if that means making up a new standard for protocol checks (likewise for call-data length)
 - Selectively use  `(tx.origin == msg.sender)` to validate "contractness" on inputs. Or use `extcodehash`  to validate known common contract types like Dapper wallets.
