@@ -2,7 +2,7 @@
 
 This project is a submission for the 2019 [CheezeWizards/CoinList](https://coinlist.co/build/cheezewizards) hackathon. ~~Before the Sept 1st, 2019 deadline this repo will be a relatively chaotic dumping group for brainstorming, research, and prototyping. The title, description, and (potentially) the overall concept may change before then.~~ 
 
-Surprise! Ghost Wizards was a speculative research project all along.
+Surprise! Ghost Wizards was a [speculative excercise](#Concept) / a [technical specification](#Core-Components) / [research project](#Disclosure-Responsibly-Disclosed) all along! 
 
 ![ux_sequence](https://github.com/nicholashc/TheButton/blob/master/ui_ux/ux/ux_video/ux_sequence_720.gif)
 
@@ -28,7 +28,7 @@ Surprise! Ghost Wizards was a speculative research project all along.
 
 - [High-Level Overview](#High-Level-Overview)
 - [Core Components](#Core-Components)
-- [Technical Considerations](#Technical0Considerations)
+- [Technical Considerations](#Technical-Considerations)
 - [Possible Extensions](#Possible-Extensions)
 - [CheezeWizards Smart Contracts in Detail](#CheezeWizards-Smart-Contracts-in-Detail) 
 - [Disclosure Responsibly Disclosed](#Disclosure-Responsibly-Disclosed)
@@ -90,10 +90,10 @@ Surprise! The contracts did change and for the better. It is now much easier to 
 - Assign this new token to the user through via the "yes, I'm making up my own standard" modification of ERC-721 standard
 - The GhostGuild contract may need to make an additional query the WizardGuild contract for innate power information
 - GhostWizard stats should fit into single struct of tightly-packed storage for each wizard *(meta-note: one reason for the project's incompleteness was an unnecessarily long search for the perfect unicode character to represent the satisfying feeling of "something fitting just right". It doesn't exist in a single character. The closest is :relieved: :ok_hand:)*
-- Invert traits to negative EVM word range `( < 0)` via the best gas efficient method possible *(meta-note: after unnecessarily intensive optimization this turned out to be the first guess: `int256(0 - _num)`. good job compiler ¯\_(ツ)_/¯?)*
+- Invert traits to negative EVM word range `< 0` via the best gas efficient method possible *(meta-note: after unnecessarily intensive optimization this turned out to be the first guess: `int256(0 - _num)`. good job compiler ¯\_(ツ)_/¯?)*
 - The traits stored should be: id, owner address, and maxPower from Tournament 
-- 	GhostGuild will implement a restricted version of the ERC-721 standard, while still publicly presenting a valid/interoperable interface. No `approveForAll()`. No `safeTransferFrom()`. Maybe even no `approve()`. *(note to reader: see the security section f [CheezeWizards Smart Contracts in Detail](#CheezeWizards-Smart-Contracts-in-Detail) to learn why trivially easy function signature spoofing + untrusted interface calls + re-entrancy with full gas passed are scary enough to trigger this level of paranoia)*
-- 	Anticipate any paradigm-shifting gotchas coming with Istanbul
+- GhostGuild will implement a restricted version of the ERC-721 standard, while still publicly presenting a valid/interoperable interface. No `approveForAll()`. No `safeTransferFrom()`. Maybe even no `approve()`. *(note to reader: see [Disclosure Responsibly Disclosed](#Disclosure-Responsibly-Disclosed) to learn why trivially easy function signature spoofing + untrusted interface calls + re-entrancy with full gas passed are scary enough to trigger this level of paranoia)*
+- Anticipate any paradigm-shifting gotchas coming with Istanbul
 
 #### Web3-Aware Scripts
 
@@ -326,33 +326,34 @@ The rules of a CheezeWizard tournament place several restrictions on when a tire
 
 *(Note to reader: this section is largely outdated now that direct access to time variables are available, but it captures the type of mental gymnastics the "no-time" contracts generate. Initially it seemed like the only way to get to these variables was to A) directly locate and read the storage from triple or quadruple nested structs/mappings/inheritances B) try and keep a parallel timekeeper contract in-sync with no way to react to pauses truslessly)*
 
-##### Current Assumptions:
+#### Current Assumptions:
 
-- At the start of Elimination Phase:
-	- `_blueMoldPower()` is fixed
-	- `remainingWizards` must be equal the total number of wizards in existence (as all presale or newly summoned wizards must enter the tournament and none can be removed before elimination)
-	- because there are non-consecutive and unissued blocks of wizard ids, in a naively-sorted list of wizard ids, a given id can be greater than the index of its position in an sorted array of `remainingWizards` 
-- During elimination:
-	- `_blueMoldPower()` doubles at a predictable block interval
-	- `remainingWizards` can only go down or remain the same
-	- `remainingWizards` can only change during a culling window
-	- the length of a naive array of battleWizards follows the same rules as `remainingWizards` 
-	- for any wizard in this naive array: its id cannot change, its power and molded status can change
+At the start of Elimination Phase:
+- `_blueMoldPower()` is fixed
+- `remainingWizards` must be equal the total number of wizards in existence (as all presale or newly summoned wizards must enter the tournament and none can be removed before elimination)
+- because there are non-consecutive and unissued blocks of wizard ids, in a naively-sorted list of wizard ids, a given id can be greater than the index of its position in an sorted array of `remainingWizards` 
+
+During elimination:
+- `_blueMoldPower()` doubles at a predictable block interval
+- `remainingWizards` can only go down or remain the same
+- `remainingWizards` can only change during a culling window
+- the length of a naive array of battleWizards follows the same rules as `remainingWizards` 
+- for any wizard in this naive array: its id cannot change, its power and molded status can change
 
 Given these assumptions, GhostWizards needs to know at most:
 
--  At the start of Elimination Phase:
-	-  `wizardsLeft[]`: which is some hypothetical set of the ids of all remaining wizards who are above the mold level
+At the start of Elimination Phase:
+-  `wizardsLeft[]`: which is some hypothetical set of the ids of all remaining wizards who are above the mold level
 
--  At the start of every Culling Window:
-	-  `wizardsLeft[]`: a set containing the same or a reduction of the previous entries. no new ids can be added
-	-  dynamic properties of each object in the set:
-		-  power level
-		-  either the mold level / or their molded status
-		-  together, a proxy for whether the wizard can be eliminated
+At the start of every Culling Window:
+-  `wizardsLeft[]`: a set containing the same or a reduction of the previous entries. no new ids can be added
+-  dynamic properties of each object in the set:
+	-  power level
+	-  either the mold level / or their molded status
+	-  together, a proxy for whether the wizard can be eliminated
 
-- Within a Culling Window:
-	- any wizard permanently eliminated via the three culling functions can alter the hypothetical `wizardsLeft[]` data structure during an active culling window. this may require resort/rebalancing more frequently or robust error handling of false positives
+Within a Culling Window:
+- any wizard permanently eliminated via the three culling functions can alter the hypothetical `wizardsLeft[]` data structure during an active culling window. this may require resort/rebalancing more frequently or robust error handling of false positives
 
 ##### Determining Valid Wizards for Elimination:
 
@@ -429,21 +430,27 @@ Time to let a diagram do some talking.
 
 #### Permission & Access
 
-*(meta-note: the hand-drawn diagrams used to work out these contract relationships looks a little too unhinged to post publicly)*
+##### tl/dr
 
-**tl/dr** The Guild is the only permanent-ish contract, there could be multiple redeploys until the official Tournament starts, at the end of the day c-level permissions accounts have a lot of control. Way too much in this author's opinion.
+The Guild is the only permanent-ish contract, there could be multiple redeploys until the official Tournament starts, at the end of the day c-level permissions accounts have a lot of control. Way too much in this author's opinion.
 
-**1) Presale** is obviously temporary. It holds ether and wizards that will be absorbed into the Guild and entered into the inaugural tournament (via the GateKeeper). (side note: technically but unlikely this can be self-destructed at any time, even if all wizards are not absorbed and those wizard ids could be overwritten)
+##### 1) Presale
+Is obviously temporary. It holds ether and wizards that will be absorbed into the Guild and entered into the inaugural tournament (via the GateKeeper). (side note: technically but unlikely this can be self-destructed at any time, even if all wizards are not absorbed and those wizard ids could be overwritten)
 
-**2) WizardGuild** holds the wizards and manages token functionality/validation. I think it's supposed to be permanent, or at least has no obvious mechanism for upgrade. Does not (consensually) hold ether and cannot be self-destructed. Also manages each "series" of wizards. Does not know about the GateKeeper explicitly, only who a "Minter" is for a given series.
+##### 2) WizardGuild
+Holds the wizards and manages token functionality/validation. I think it's supposed to be permanent, or at least has no obvious mechanism for upgrade. Does not (consensually) hold ether and cannot be self-destructed. Also manages each "series" of wizards. Does not know about the GateKeeper explicitly, only who a "Minter" is for a given series.
 
-**3) GateKeeper** controls actions and access to other contracts. It hardcodes the Presale and Guild addresses. It also registers tournaments and handles new summonings, revivals, etc, directed to other contracts. I think the inaugural one will be one-time use contract to deal with the presale, but in theory they could be reused. It's not supposed to have ether other than some overpay dust but nevertheless can be have its full balance withdrawn arbitrarily. Can also be self-destructed with restrictions.
+##### 3) GateKeeper
+Controls actions and access to other contracts. It hardcodes the Presale and Guild addresses. It also registers tournaments and handles new summonings, revivals, etc, directed to other contracts. I think the inaugural one will be one-time use contract to deal with the presale, but in theory they could be reused. It's not supposed to have ether other than some overpay dust but nevertheless can be have its full balance withdrawn arbitrarily. Can also be self-destructed with restrictions.
 
-**4) Tournament** is a one time use contract that has the Guild and GateKeeper hardcoded, and sets the DuelResolver at deployment. It manages "battle clones" of the wizards participating, which are unique to that tournament. Holds the prize value and keeps track of the time/rules. It can be self-destructed after a certain length of time after the tournament ends, even if the prize isn't claimed.
+##### 4) Tournament
+Is a one time use contract that has the Guild and GateKeeper hardcoded, and sets the DuelResolver at deployment. It manages "battle clones" of the wizards participating, which are unique to that tournament. Holds the prize value and keeps track of the time/rules. It can be self-destructed after a certain length of time after the tournament ends, even if the prize isn't claimed.
 
-**5) DuelResolver** just does fancy math and dosen't know about any other contracts. It can be reused by multiple tournaments or there could be different versions. Does not (consensually) hold ether and cannot be self-destructed. 
+##### 5) DuelResolver
+Just does fancy math and dosen't know about any other contracts. It can be reused by multiple tournaments or there could be different versions. Does not (consensually) hold ether and cannot be self-destructed. 
 
-**6) C-Levels** ultimately there are ceo/coo/cfo roles in the important contracts that have pretty widespread powers (some limits within active tournaments and closed wizard series). By proxy the ceo has every power of any role lower in the hierarchy by the ability to reset coo/cfo/gatekeeper/minter/tournament/etc.
+##### 6) C-Levels 
+Ultimately there are ceo/coo/cfo roles in the important contracts that have pretty widespread powers (some limits within active tournaments and closed wizard series). By proxy the ceo has every power of any role lower in the hierarchy by the ability to reset coo/cfo/gatekeeper/minter/tournament/etc.
 
 ### Disclosure Responsibly Disclosed
 
@@ -492,7 +499,7 @@ In CW's implementation of `safeTransferFrom()` the following effects happen:
 - `safeTransferFrom()` accepts and then passes back a bytes argument of any length. This could hypothetically contain full code for deploying a contract or somehow be used as a payload
 - Passing the final verification is as simple as slapping `return 0x150b7a02` at the end of your function
 
-##### Simple Example
+#### Simple Example
 
 The following is a highly simplified version of the CW presale contract. I've removed most of the token logic to demonstrate the impact of this particular call. The same outcome is possible with the full contract, as long as the transfer is initiated from a valid token holder. Note that I have also removed the check for "contractness". In this case the attacker wants to be a contract. 
 
@@ -542,7 +549,7 @@ contract Fake721{
 
 I appreciate that many of these design choices are a direct effect of the IERC721, and other standards, as well as the Zeppelin implementations. In my opinion, you are introducing significant attack surface to go out of your way to make sure a receiver is valid, especially as standard contract-wallets like Dapper become more popular.  
 
-##### Suggestions
+#### Suggestions
 
 - Set reasonable gas stipends forwards to all untrusted external calls, even if that means making up a new standard for protocol checks (likewise for call-data length)
 - Selectively use  `(tx.origin == msg.sender)` to validate "contractness" on inputs. Or use `extcodehash`  to validate known common contract types like Dapper wallets.
