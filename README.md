@@ -26,14 +26,14 @@ Surprise! Ghost Wizards was a speculative research project all along.
 
 ### Table of Contents
 
-- [High-Level Overview](#High-Level Overview)
+- [High-Level Overview](#High Level Overview)
 - [Core Components](#Core Components)
 - [Technical Considerations](#Technical Considerations)
 - [Possible Extensions](#Possible Extensions)
 - [CheezeWizards Smart Contracts in Detail](#CheezeWizards Smart Contracts in Detail) 
 - [Disclosure Responsibly Disclosed](#Disclosure Responsibly Disclosed)
 
-### High_Level_Overview
+### High Level Overview
 
 *Note to reader: please preface any definitive-sounding statements with "experiment/speculation/prototype..." as needed to accommodate the (in-)completeness of this project* 
 
