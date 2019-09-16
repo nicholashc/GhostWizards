@@ -2,7 +2,7 @@
 
 This project is a submission for the 2019 [CheezeWizards/CoinList](https://coinlist.co/build/cheezewizards) hackathon. ~~Before the Sept 1st, 2019 deadline this repo will be a relatively chaotic dumping group for brainstorming, research, and prototyping. The title, description, and (potentially) the overall concept may change before then.~~ 
 
-Surprise! Ghost Wizards was a [speculative excercise](#Concept) / a [technical specification](#Core-Components) / [research project](#Disclosure-Responsibly-Disclosed) all along! 
+Surprise! Ghost Wizards was a [speculative excercise](#Concept) / [technical specification](#Core-Components) / [research project](#Disclosure-Responsibly-Disclosed) all along! 
 
 ![ux_sequence](https://github.com/nicholashc/TheButton/blob/master/ui_ux/ux/ux_video/ux_sequence_720.gif)
 
